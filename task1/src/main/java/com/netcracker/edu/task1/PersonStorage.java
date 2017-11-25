@@ -28,7 +28,7 @@ public class PersonStorage {
     }
     
     public void deletePerson(int id) {
-        long tmp = -1;
+        int tmp = -1;
         for (int i = 0; i < arr.length; i++) {
             if (arr[i].getId() == id) {
                 tmp = id;
