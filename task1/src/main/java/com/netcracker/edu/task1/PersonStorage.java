@@ -5,6 +5,7 @@
  */
 package com.netcracker.edu.task1;
 
+import java.util.Arrays;
 /**
  *
  * @author PC-Administrator
@@ -43,4 +44,36 @@ public class PersonStorage {
         }
     }
     
+    public int getTail() {
+        return tail;
+    }
+    
+    public Person getPerson(int id) {
+        int tmp = -1;
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i].getId() == id) {
+                tmp = id;
+            }
+        }
+        return arr[id];
+    }
+    public void print() {
+        for (Person i : arr) {
+            System.out.println("ID: " + i.getId() + "; Surname: " + i.getSurname() +
+                    "; Age: " + i.getAge());
+        }
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        
+        PersonStorage other = (PersonStorage) obj;
+        if (tail != other.tail)
+            return false;
+        return Arrays.equals(arr, other.arr);
+    }
 }
