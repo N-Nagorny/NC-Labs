@@ -1,2 +1,4 @@
 *.netbeans_automatic_build
 /task1/target/
+*.iml
+/.idea/
