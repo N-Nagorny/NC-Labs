@@ -144,4 +144,11 @@ public class PersonStorage {
             return false;
         return Arrays.equals(arr, other.arr);
     }
+
+    @Override
+    public int hashCode() {
+        int result = Arrays.hashCode(arr);
+        result = 31 * result + tail;
+        return result;
+    }
 }

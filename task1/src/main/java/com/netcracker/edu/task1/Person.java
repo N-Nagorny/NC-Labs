@@ -64,12 +64,22 @@ public class Person {
         DateTime dtob = dob.toDateTimeAtStartOfDay();
         return Years.yearsBetween(dtob, new DateTime()).getYears();
     }
-    
+
+
+    @Override
+    public int hashCode() {
+        int result = dob.hashCode();
+        result = 31 * result + surname.hashCode();
+        result = 31 * result + id.hashCode();
+        return result;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
         if (obj == null)
+
             return false;
         
         Person other = (Person) obj;
