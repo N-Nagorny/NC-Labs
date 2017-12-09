@@ -3,11 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.netcracker.edu.task1;
+package com.netcracker.edu.comparator;
+
+import com.netcracker.edu.task1.Person;
 
 import java.util.Comparator;
 
-class SortedByAge implements Comparator<Person> {
+public class SortedByAge implements Comparator<Person> {
       
        public int compare(Person obj1, Person obj2) {
             

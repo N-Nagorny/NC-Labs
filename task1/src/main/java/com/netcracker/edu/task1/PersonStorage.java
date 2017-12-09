@@ -1,8 +1,16 @@
 package com.netcracker.edu.task1;
 
-import java.util.Arrays;
-import java.util.Comparator;
+import java.util.*;
 
+import com.netcracker.edu.comparator.SortedByAge;
+import com.netcracker.edu.comparator.SortedById;
+import com.netcracker.edu.comparator.SortedBySurname;
+import com.netcracker.edu.config.Configurator;
+import com.netcracker.edu.searcher.PersonSearcher;
+import com.netcracker.edu.searcher.SearchByAge;
+import com.netcracker.edu.searcher.SearchById;
+import com.netcracker.edu.searcher.SearchBySurname;
+import com.netcracker.edu.sorter.PersonSorter;
 public class PersonStorage {
     
     private Person[] arr;
@@ -12,6 +20,25 @@ public class PersonStorage {
         arr = new Person[arrSize];
     }
             
+    /**
+     * Class constructor
+     * @param arr array of Person
+     * @param tail number of last filled element
+     */
+    public PersonStorage(Person[] arr, int tail) {
+        this.arr = arr;
+        this.tail = tail;
+    }
+    /**
+     * Gets number of last filled element in storage
+     * @return number of last filled element
+     */
+    public int getTail() {
+        return tail;
+    }
+    public Person[] getArr() {
+        return arr;
+    }
     public void addPerson(Person person) {
         if (arr[arr.length - 1] != null)  {
             Person[] newArr = new Person[2 * arr.length];
@@ -20,108 +47,84 @@ public class PersonStorage {
         }
         arr[tail++] = person;
     }
-    
-    public void deletePerson(int id) {
-        int tmp = -1;
-        for (int i = 0; i < arr.length; i++) {
-            if (arr[i].getId() == id) {
+
+    /**
+     * Deletes Person from PersonStorage by his ID
+     * @param id
+     */
+    public void deletePerson(UUID id) {
+        UUID tmp = null;
+        int i;
+        for (i = 0; i < tail; i++) {
+            if (arr[i].getId().equals(id)) {
                 tmp = id;
+                break;
             }
         }
-        
-        if (id != tmp) {
-            Person[] newArr = new Person[arr.length - 2];
-            System.arraycopy(arr, 0, newArr, 0, id);
-            System.arraycopy(arr, id + 2, newArr, id + 1, arr.length);
-            arr = newArr;
+
+        if (tmp != null) {
+            System.arraycopy(arr, i + 1, arr, i, tail - i);
+            tail--;
         }
     }
-    
-    public int getTail() {
-        return tail;
-    }
-    
-    public Person getPerson(int id) {
-        int tmp = -1;
-        for (int i = 0; i < arr.length; i++) {
-            if (arr[i].getId() == id) {
-                tmp = id;
-            }
-        }
-        return arr[id];
-    }
-    
-    private void sort(Comparator<Person> comparator) {
-        Person temp;
+
+
+    /**
+     * Gets Person by ID
+     * @param id
+     * @return Person
+     */
+    public Person getPersonById(UUID id) {
+        Person tmp = null;
         for (int i = 0; i < tail; i++) {
-        for (int j = 1; j < (tail - i); j++) {
-            if (comparator.compare(arr[j - 1], arr[j]) > 0) {
-                temp = arr[j - 1];
-                arr[j - 1] = arr[j];
-                arr[j] = temp;
+            if (arr[i].getId().equals(id)) {
+                tmp = arr[i];
+                break;
             }
         }
-        }
+        return tmp;
     }
-    
+
+    private PersonStorage search(PersonSearcher ps, Object object) {
+        PersonStorage pStorage = new PersonStorage(1);
+        for (int i = 0; i < tail; i++) {
+            if (ps.isMatchTo(arr[i], object)) {
+                pStorage.addPerson(arr[i]);
+            }
+        }
+        return pStorage;
+    }
+
+    public PersonStorage searchBySurname(String surname) {
+        return search(new SearchBySurname(), surname);
+    }
+
+    public PersonStorage searchByAge(int age) {
+        return search(new SearchByAge(), age);
+    }
+
+    public PersonStorage searchById(UUID id) {
+        return search(new SearchById(), id);
+    }
+
+    private void sort(Comparator<Person> comparator,PersonSorter sorter) {
+        PersonStorage ps = sorter.sort(this, comparator);
+        this.arr = ps.getArr();
+        this.tail = ps.getTail();
+        }
+
     public void sortByAge() {
-        sort(new SortedByAge() {
-            
-            @Override
-            public int compare(Person obj1, Person obj2) {
-            
-             int age1 = obj1.getAge();
-             int age2 = obj2.getAge();
-
-             if(age1 > age2) {
-                    return 1;
-             }
-             else if(age1 < age2) {
-                    return -1;
-             }
-             else {
-                    return 0;
-             }
-       }
-        });
+        sort(new SortedByAge(), Configurator.getInstance().getSorter());
     }
-    
+
     public void sortById() {
-        sort(new SortedById() {
-            
-            @Override
-            public int compare(Person obj1, Person obj2) {
-            
-             int id1 = obj1.getId();
-             int id2 = obj2.getId();
-
-             if(id1 > id2) {
-                    return 1;
-             }
-             else if(id1 < id2) {
-                    return -1;
-             }
-             else {
-                    return 0;
-             }
-       }
-        });
+        sort(new SortedById(), Configurator.getInstance().getSorter());
     }
-    
+
     public void sortBySurname() {
-        sort(new SortedBySurname() {
-
-            @Override
-            public int compare(Person obj1, Person obj2) {
-            
-            String str1 = obj1.getSurname();
-            String str2 = obj2.getSurname();
-            
-            return str1.compareTo(str2);
-            }
-        });
+        sort(new SortedBySurname(), Configurator.getInstance().getSorter());
     }
-    
+
     public void print() {
         for (Person i : arr) {
             System.out.println("ID: " + i.getId() + "; Surname: " + i.getSurname() +

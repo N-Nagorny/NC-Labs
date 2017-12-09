@@ -1,23 +1,23 @@
 package com.netcracker.edu.task1;
 
 import org.joda.time.*;
+import java.util.UUID;
 
 public class Person {
     
     private LocalDate dob;
     private String    surname;
-    private int       id;
+    private UUID      id;
 
     /**
     * Class constructor
     * @param dob the date of birth of the person. Uses LocalDate joda-time format.
     * @param surname the surname of the person.
-    * @param id the id of the person.
-    */    
-    public Person(LocalDate dob, String surname, int id) {
+     */
+    public Person(LocalDate dob, String surname) {
         this.dob = dob;
         this.surname = surname;
-        this.id = id;
+        this.id = UUID.randomUUID();
     }
     
     /**
@@ -35,15 +35,6 @@ public class Person {
      */
     public void setSurname(String surname) {
         this.surname = surname;
-    }
-    
-    
-    /**
-     * Sets the person's id.
-     * @param id wanted id to set.
-     */
-    public void setId(int id) {
-        this.id = id;
     }
     
     /**
@@ -65,10 +56,10 @@ public class Person {
     /** Gets the person's id.
      * @return the person's id. 
      */
-    public int getId() {
+    public UUID getId() {
         return id;
     }
-    
+
     public int getAge() {
         DateTime dtob = dob.toDateTimeAtStartOfDay();
         return Years.yearsBetween(dtob, new DateTime()).getYears();
@@ -82,7 +73,7 @@ public class Person {
             return false;
         
         Person other = (Person) obj;
-        if (id != other.id)
+        if (!(id.equals(other.id)))
             return false;
         if (!(surname.equals(other.surname)))
             return false;
