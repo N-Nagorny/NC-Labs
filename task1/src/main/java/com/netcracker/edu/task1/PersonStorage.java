@@ -39,13 +39,25 @@ public class PersonStorage {
     public Person[] getArr() {
         return arr;
     }
+
+    /**
+     * Adds Person into PersonStorage
+     * @param person
+     */
     public void addPerson(Person person) {
         if (arr[arr.length - 1] != null)  {
             Person[] newArr = new Person[2 * arr.length];
             System.arraycopy(arr, 0, newArr, 0, arr.length);
             arr = newArr;
         }
-        arr[tail++] = person;
+        if (tail != 0) {
+            arr[tail++] = person;
+        }
+        else {
+            arr[tail] = person;
+            tail++;
+        }
+
     }
 
     /**
@@ -127,6 +139,9 @@ public class PersonStorage {
 
     public void print() {
         for (Person i : arr) {
+            if (i == null) {
+                break;
+            }
             System.out.println("ID: " + i.getId() + "; Surname: " + i.getSurname() +
                     "; Age: " + i.getAge());
         }
