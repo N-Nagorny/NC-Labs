@@ -1,9 +1,6 @@
 package com.netcracker.edu.task1;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.UUID;
+import java.util.*;
 
 public class Garage implements Repository<Car> {
     private Car[] arr;
@@ -30,7 +27,7 @@ public class Garage implements Repository<Car> {
         this.arr = arr;
         this.tail = tail;
     }
-    /**
+     /**
      * Gets number of last filled element in storage
      * @return number of last filled element
      */

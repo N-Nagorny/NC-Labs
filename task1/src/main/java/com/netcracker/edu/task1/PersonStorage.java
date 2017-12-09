@@ -11,9 +11,10 @@ import com.netcracker.edu.searcher.SearchByAge;
 import com.netcracker.edu.searcher.SearchById;
 import com.netcracker.edu.searcher.SearchBySurname;
 import com.netcracker.edu.sorter.PersonSorter;
+import org.apache.log4j.Logger;
 
 public class PersonStorage implements Repository<Person> {
-
+    final static Logger logger = Logger.getLogger(PersonStorage.class);
     private Person[] arr;
     private int tail = 0;
 
@@ -60,6 +61,7 @@ public class PersonStorage implements Repository<Person> {
             Person[] newArr = new Person[2 * arr.length];
             System.arraycopy(arr, 0, newArr, 0, arr.length);
             arr = newArr;
+            logger.info("Array size: " + arr.length);
         }
         if (tail != 0) {
             arr[tail++] = person;
@@ -109,6 +111,7 @@ public class PersonStorage implements Repository<Person> {
     }
 
     private PersonStorage search(PersonSearcher ps, Object object) {
+        logger.debug("search() was called");
         PersonStorage pStorage = new PersonStorage(1);
         for (int i = 0; i < tail; i++) {
             if (ps.isMatchTo(arr[i], object)) {

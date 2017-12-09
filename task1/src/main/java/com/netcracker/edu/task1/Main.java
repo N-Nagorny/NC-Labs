@@ -1,9 +1,10 @@
 package com.netcracker.edu.task1;
 
+import org.apache.log4j.Logger;
 import org.joda.time.*;
 
 public class Main {
-
+    final static Logger logger = Logger.getLogger(Main.class);
     public static void main( String[] args )
     {
         LocalDate dob = new LocalDate(1996, 8, 3);
