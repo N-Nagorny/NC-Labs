@@ -12,8 +12,8 @@ import com.netcracker.edu.searcher.SearchById;
 import com.netcracker.edu.searcher.SearchBySurname;
 import com.netcracker.edu.sorter.PersonSorter;
 
-public class PersonStorage implements Iterable<Person> {
-    
+public class PersonStorage implements Repository<Person> {
+
     private Person[] arr;
     private int tail = 0;
 
@@ -42,6 +42,7 @@ public class PersonStorage implements Iterable<Person> {
      * Gets number of last filled element in storage
      * @return number of last filled element
      */
+
     public int getTail() {
         return tail;
     }
@@ -53,7 +54,8 @@ public class PersonStorage implements Iterable<Person> {
      * Adds Person into PersonStorage
      * @param person
      */
-    public void addPerson(Person person) {
+    @Override
+    public void addItem(Person person) {
         if (arr[arr.length - 1] != null)  {
             Person[] newArr = new Person[2 * arr.length];
             System.arraycopy(arr, 0, newArr, 0, arr.length);
@@ -110,7 +112,7 @@ public class PersonStorage implements Iterable<Person> {
         PersonStorage pStorage = new PersonStorage(1);
         for (int i = 0; i < tail; i++) {
             if (ps.isMatchTo(arr[i], object)) {
-                pStorage.addPerson(arr[i]);
+                pStorage.addItem(arr[i]);
             }
         }
         return pStorage;

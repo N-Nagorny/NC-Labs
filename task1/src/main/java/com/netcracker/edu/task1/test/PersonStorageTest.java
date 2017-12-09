@@ -15,10 +15,10 @@ class PersonStorageTest {
         Person goryainov2 = new Person(dob.plusYears(9), "Norkin");
         Person goryainov3 = new Person(dob.plusYears(6), "Moryakov");
         Person goryainov4 = new Person(dob.plusYears(8), "Khorkin");
-        ps.addPerson(goryainov);
-        ps.addPerson(goryainov2);
-        ps.addPerson(goryainov3);
-        ps.addPerson(goryainov4);
+        ps.addItem(goryainov);
+        ps.addItem(goryainov2);
+        ps.addItem(goryainov3);
+        ps.addItem(goryainov4);
 
         assertEquals(4, ps.getTail());
     }
