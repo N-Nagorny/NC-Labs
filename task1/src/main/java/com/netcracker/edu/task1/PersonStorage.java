@@ -11,15 +11,24 @@ import com.netcracker.edu.searcher.SearchByAge;
 import com.netcracker.edu.searcher.SearchById;
 import com.netcracker.edu.searcher.SearchBySurname;
 import com.netcracker.edu.sorter.PersonSorter;
-public class PersonStorage {
+
+public class PersonStorage implements Iterable<Person> {
     
     private Person[] arr;
     private int tail = 0;
-    
+
+    public PersonStorage() {
+        this(1);
+    }
+
+    /**
+     * Class constructor
+     * @param arrSize size of PersonStorage
+     */
     public PersonStorage(int arrSize) {
         arr = new Person[arrSize];
     }
-            
+
     /**
      * Class constructor
      * @param arr array of Person
@@ -146,7 +155,29 @@ public class PersonStorage {
                     "; Age: " + i.getAge());
         }
     }
-    
+
+    @Override
+    public Iterator<Person> iterator() {
+        return new Iterator<Person>() {
+            private Person person = arr[0];
+            private int last = 0;
+
+            @Override
+            public boolean hasNext() {
+                return last < tail;
+            }
+
+            @Override
+            public Person next() {
+                if(!hasNext()) throw new NoSuchElementException();
+
+                Person cur = person;
+                person = arr[last++];
+                return cur;
+            }
+        };
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
