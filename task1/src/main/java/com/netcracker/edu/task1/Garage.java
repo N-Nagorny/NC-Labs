@@ -2,7 +2,7 @@ package com.netcracker.edu.task1;
 
 import java.util.*;
 
-public class Garage implements Repository<Car> {
+public class Garage extends AbstractRep<Car> {
     private Car[] arr;
     private int tail = 0;
 
@@ -96,28 +96,21 @@ public class Garage implements Repository<Car> {
         }
         return tmp;
     }
+
+
     @Override
-    public Iterator<Car> iterator() {
-        return new Iterator<Car>() {
-            private Car car = arr[0];
-            private int last = 0;
-
-            @Override
-            public boolean hasNext() {
-                return last < tail;
-            }
-
-            @Override
-            public Car next() {
-                if(!hasNext()) throw new NoSuchElementException();
-
-                Car cur = car;
-                car = arr[last++];
-                return cur;
-            }
-        };
+    protected Repository<Car> getRepositoryInstance() {
+        return null;
     }
 
+    public void print() {
+        for (Car i : toArray(new Car[0])) {
+            if (i == null) {
+                break;
+            }
+            System.out.println("ID: " + i.getId());
+        }
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

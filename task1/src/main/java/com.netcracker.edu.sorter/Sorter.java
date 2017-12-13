@@ -4,7 +4,8 @@ import com.netcracker.edu.task1.Person;
 import com.netcracker.edu.task1.PersonStorage;
 
 import java.util.Comparator;
+import java.util.SortedMap;
 
-public interface PersonSorter {
-    public PersonStorage sort(PersonStorage personStorage, Comparator<Person> comparator);
+public interface Sorter<T> {
+    void sort(Object[] arr, Comparator<T> comparator);
 }

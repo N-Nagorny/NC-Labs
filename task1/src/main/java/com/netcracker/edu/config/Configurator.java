@@ -2,11 +2,11 @@ package com.netcracker.edu.config;
 
 import com.netcracker.edu.sorter.BubbleSort;
 import com.netcracker.edu.sorter.InsertionSort;
-import com.netcracker.edu.sorter.PersonSorter;
+import com.netcracker.edu.sorter.Sorter;
 
 import java.util.ResourceBundle;
 
-public class Configurator {
+public class Configurator<T> {
     private static Configurator instance;
 
     public static synchronized Configurator getInstance() {
@@ -16,7 +16,7 @@ public class Configurator {
         return instance;
     }
 
-    public synchronized PersonSorter getSorter() {
+    public synchronized Sorter<T> getSorter() {
         String sorter = "BubbleSort";
         ResourceBundle rb = ResourceBundle.getBundle("config");
         sorter = rb.getString("sorter");

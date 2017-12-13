@@ -6,17 +6,13 @@ import com.netcracker.edu.comparator.SortedByAge;
 import com.netcracker.edu.comparator.SortedById;
 import com.netcracker.edu.comparator.SortedBySurname;
 import com.netcracker.edu.config.Configurator;
-import com.netcracker.edu.searcher.PersonSearcher;
-import com.netcracker.edu.searcher.SearchByAge;
-import com.netcracker.edu.searcher.SearchById;
-import com.netcracker.edu.searcher.SearchBySurname;
-import com.netcracker.edu.sorter.PersonSorter;
+import com.netcracker.edu.searcher.person.SearchByAge;
+import com.netcracker.edu.searcher.person.SearchById;
+import com.netcracker.edu.searcher.person.SearchBySurname;
 import org.apache.log4j.Logger;
 
-public class PersonStorage implements Repository<Person> {
+public class PersonStorage extends AbstractRep<Person> {
     final static Logger logger = Logger.getLogger(PersonStorage.class);
-    private Person[] arr;
-    private int tail = 0;
 
     public PersonStorage() {
         this(1);
@@ -30,48 +26,6 @@ public class PersonStorage implements Repository<Person> {
         arr = new Person[arrSize];
     }
 
-    /**
-     * Class constructor
-     * @param arr array of Person
-     * @param tail number of last filled element
-     */
-    public PersonStorage(Person[] arr, int tail) {
-        this.arr = arr;
-        this.tail = tail;
-    }
-    /**
-     * Gets number of last filled element in storage
-     * @return number of last filled element
-     */
-
-    public int getTail() {
-        return tail;
-    }
-    public Person[] getArr() {
-        return arr;
-    }
-
-    /**
-     * Adds Person into PersonStorage
-     * @param person
-     */
-    @Override
-    public void addItem(Person person) {
-        if (arr[arr.length - 1] != null)  {
-            Person[] newArr = new Person[2 * arr.length];
-            System.arraycopy(arr, 0, newArr, 0, arr.length);
-            arr = newArr;
-            logger.info("Array size: " + arr.length);
-        }
-        if (tail != 0) {
-            arr[tail++] = person;
-        }
-        else {
-            arr[tail] = person;
-            tail++;
-        }
-
-    }
 
     /**
      * Deletes Person from PersonStorage by his ID
@@ -80,8 +34,9 @@ public class PersonStorage implements Repository<Person> {
     public void deletePerson(UUID id) {
         UUID tmp = null;
         int i;
+        Person[] tmpArr = toArray(new Person[0]);
         for (i = 0; i < tail; i++) {
-            if (arr[i].getId().equals(id)) {
+            if (tmpArr[i].getId().equals(id)) {
                 tmp = id;
                 break;
             }
@@ -93,7 +48,6 @@ public class PersonStorage implements Repository<Person> {
         }
     }
 
-
     /**
      * Gets Person by ID
      * @param id
@@ -101,58 +55,48 @@ public class PersonStorage implements Repository<Person> {
      */
     public Person getPersonById(UUID id) {
         Person tmp = null;
+        Person[] tmpArr = toArray(new Person[0]);
         for (int i = 0; i < tail; i++) {
-            if (arr[i].getId().equals(id)) {
-                tmp = arr[i];
+            if (tmpArr[i].getId().equals(id)) {
+                tmp = tmpArr[i];
                 break;
             }
         }
         return tmp;
     }
 
-    private PersonStorage search(PersonSearcher ps, Object object) {
-        logger.debug("search() was called");
-        PersonStorage pStorage = new PersonStorage(1);
-        for (int i = 0; i < tail; i++) {
-            if (ps.isMatchTo(arr[i], object)) {
-                pStorage.addItem(arr[i]);
-            }
-        }
-        return pStorage;
+    @Override
+    protected Repository<Person> getRepositoryInstance() {
+        return new PersonStorage();
     }
 
-    public PersonStorage searchBySurname(String surname) {
+    public Repository<Person> searchBySurname(String surname) {
         return search(new SearchBySurname(), surname);
     }
 
-    public PersonStorage searchByAge(int age) {
+    public Repository<Person> searchByAge(int age) {
         return search(new SearchByAge(), age);
     }
 
-    public PersonStorage searchById(UUID id) {
+    public Repository<Person> searchById(UUID id) {
         return search(new SearchById(), id);
     }
 
-    private void sort(Comparator<Person> comparator,PersonSorter sorter) {
-        PersonStorage ps = sorter.sort(this, comparator);
-        this.arr = ps.getArr();
-        this.tail = ps.getTail();
-        }
 
     public void sortByAge() {
-        sort(new SortedByAge(), Configurator.getInstance().getSorter());
+        Configurator.getInstance().getSorter().sort(getArr(), new SortedByAge());
     }
 
     public void sortById() {
-        sort(new SortedById(), Configurator.getInstance().getSorter());
+        Configurator.getInstance().getSorter().sort(getArr(), new SortedById());
     }
 
     public void sortBySurname() {
-        sort(new SortedBySurname(), Configurator.getInstance().getSorter());
+        Configurator.getInstance().getSorter().sort(getArr(), new SortedBySurname());
     }
 
     public void print() {
-        for (Person i : arr) {
+        for (Person i : toArray(new Person[0])) {
             if (i == null) {
                 break;
             }
@@ -162,38 +106,14 @@ public class PersonStorage implements Repository<Person> {
     }
 
     @Override
-    public Iterator<Person> iterator() {
-        return new Iterator<Person>() {
-            private Person person = arr[0];
-            private int last = 0;
-
-            @Override
-            public boolean hasNext() {
-                return last < tail;
-            }
-
-            @Override
-            public Person next() {
-                if(!hasNext()) throw new NoSuchElementException();
-
-                Person cur = person;
-                person = arr[last++];
-                return cur;
-            }
-        };
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
         if (obj == null)
             return false;
-        
+
         PersonStorage other = (PersonStorage) obj;
-        if (tail != other.tail)
-            return false;
-        return Arrays.equals(arr, other.arr);
+        return tail == other.tail && Arrays.equals(arr, other.arr);
     }
 
     @Override
